@@ -1,26 +1,30 @@
+import 'dart:async';
+
 
 abstract class Maintainable {
-  void serviceEngine();
+  Future<void> serviceEngine();
 }
 
-// --- MIXIN ---
-// Feature that can be added to any vehicle class
+
+
 mixin GPSNavigable {
-  void navigateTo(String destination) {
-    print('GPS Navigation: Routing optimal path to "$destination"...');
+  Future<void> navigateTo(String destination) async {
+    print('GPS: Searching location...');
+    await Future.delayed(Duration(seconds: 1)); // 1-second delay
+    print('GPS Navigation: Routing optimal path to "$destination"...\n');
   }
 }
 
-// --- BASE CLASS (From Week 9) ---
+
 abstract class Tricycle implements Maintainable {
   // Encapsulation: Private color property
   String _color;
   bool isEngineRunning = false;
 
-  // Constructor
+
   Tricycle(this._color);
 
-  // Getter & Setter
+  
   String get color => _color;
   set color(String newColor) {
     if (newColor == 'silver' || newColor == 'black' || newColor == 'white') {
@@ -30,96 +34,109 @@ abstract class Tricycle implements Maintainable {
     }
   }
 
-  // Base methods
-  void kickstartEngine() {
+  
+  Future<void> kickstartEngine() async {
+    print('Starting $_color tricycle engine...');
+    await Future.delayed(Duration(seconds: 1)); // 1-second delay
     isEngineRunning = true;
-    print('The $_color tricycle engine is started: Vroom vroom!');
+    print('The $_color tricycle engine is running: Vroom vroom!\n');
   }
 
-  void honk() {
-    print('The $_color tricycle honks: Beep beep!');
+  Future<void> honk() async {
+    await Future.delayed(Duration(seconds: 1)); // 1-second delay
+    print('The $_color tricycle honks: Beep beep!\n');
   }
 }
 
-// --- DERIVED CLASS 1 (Inheritance & Polymorphism) ---
+
 class PassengerTricycle extends Tricycle {
   int passengerCapacity;
 
   PassengerTricycle(String color, this.passengerCapacity) : super(color);
 
-  // Polymorphism: Overriding honk method
+  
   @override
-  void honk() {
-    print('Passenger Tricycle ($_color): "BEEP BEEP! Commuters board now!"');
+  Future<void> honk() async {
+    print('Preparing to honk...');
+    await Future.delayed(Duration(seconds: 1)); // 1-second delay
+    print('Passenger Tricycle ($_color): "BEEP BEEP! Commuters board now!"\n');
   }
 
-  // Implementation of Abstract Class method
+  
   @override
-  void serviceEngine() {
-    print('Servicing Passenger Tricycle: Checking passenger safety & brakes.');
+  Future<void> serviceEngine() async {
+    print('Servicing Passenger Tricycle...');
+    await Future.delayed(Duration(seconds: 1)); // 1-second delay
+    print('Service Complete: Checked passenger safety & brakes.\n');
   }
 
-  void loadPassengers(int count) {
+  Future<void> loadPassengers(int count) async {
+    print('Loading passengers...');
+    await Future.delayed(Duration(seconds: 1)); // 1-second delay
     if (count <= passengerCapacity) {
-      print('Loaded $count passenger(s) into the sidecar.');
+      print('Loaded $count passenger(s) into the sidecar.\n');
     } else {
-      print('Overload! Capacity limit is $passengerCapacity passengers.');
+      print('Overload! Capacity limit is $passengerCapacity passengers.\n');
     }
   }
 }
 
-// --- DERIVED CLASS 2 (Inheritance, Polymorphism & Mixin) ---
+
 class CargoTricycle extends Tricycle with GPSNavigable {
   double maxCargoKg;
 
   CargoTricycle(String color, this.maxCargoKg) : super(color);
 
-  // Polymorphism: Overriding kickstartEngine method
+  
   @override
-  void kickstartEngine() {
+  Future<void> kickstartEngine() async {
+    print('Cargo Tricycle ($_color): Kickstarting heavy duty engine...');
+    await Future.delayed(Duration(seconds: 1)); // 1-second delay
     isEngineRunning = true;
-    print('Cargo Tricycle ($_color): Heavy duty kickstart initiated. Engine roaring!');
+    print('Engine roaring! Ready for heavy load.\n');
   }
 
-  // Implementation of Abstract Class method
+  
   @override
-  void serviceEngine() {
-    print('Servicing Cargo Tricycle: Inspecting heavy-duty suspension & tires.');
+  Future<void> serviceEngine() async {
+    print('Servicing Cargo Tricycle...');
+    await Future.delayed(Duration(seconds: 1)); // 1-second delay
+    print('Service Complete: Inspected heavy-duty suspension & tires.\n');
   }
 
-  void loadCargo(double weight) {
-    print('Loaded ${weight}kg of cargo (Max capacity: ${maxCargoKg}kg).');
+  Future<void> loadCargo(double weight) async {
+    print('Loading cargo...');
+    await Future.delayed(Duration(seconds: 1)); // 1-second delay
+    print('Loaded ${weight}kg of cargo (Max capacity: ${maxCargoKg}kg).\n');
   }
 }
 
-// --- MAIN FUNCTION ---
-void main() {
-  print('=== WEEK 10: ENHANCED TRICYCLE OOP DEMO ===\n');
 
-  // Polymorphism in action: List of base class pointers storing derived instances
+Future<void> main() async {
+
+
   List<Tricycle> fleet = [
     PassengerTricycle('silver', 4),
     CargoTricycle('black', 250.0),
   ];
 
   for (var tricycle in fleet) {
-    print('--- Tricycle Details ---');
-    print('Color: ${tricycle.color}');
+    print('====================================');
+    print('Tricycle Color: ${tricycle.color}');
+    print('====================================\n');
     
-    // Calls polymorphic methods
-    tricycle.kickstartEngine();
-    tricycle.honk();
-    tricycle.serviceEngine();
+    
+    await tricycle.kickstartEngine();
+    await tricycle.honk();
+    await tricycle.serviceEngine();
 
-    // Type checking for unique derived class behaviors
     if (tricycle is PassengerTricycle) {
-      tricycle.loadPassengers(3);
+      await tricycle.loadPassengers(3);
     } else if (tricycle is CargoTricycle) {
-      tricycle.loadCargo(150.0);
-      // Calling mixin method
-      tricycle.navigateTo('Central Market');
+      await tricycle.loadCargo(150.0);
+      await tricycle.navigateTo('Central Market');
     }
-
-    print('');
   }
+
+  print('=== DEMO COMPLETED ===');
 }
