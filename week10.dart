@@ -1,5 +1,4 @@
-// --- ABSTRACT CLASS / INTERFACE ---
-// Contract defining maintenance operations
+
 abstract class Maintainable {
   void serviceEngine();
 }
